@@ -40,29 +40,31 @@ data_raw = fyf.download(tickers, start)
 
 # just what we need for now
 data = data_raw["Adj Close"]
-data.tail()
+print(data.tail())
 
 # plot raw imported data
-# plt.figure(figsize=(20, 9))
-# plt.plot(data)
-# plt.legend(tickers, loc=2)
-# plt.show()
+plt.figure(figsize=(20, 9))
+plt.plot(data)
+plt.legend(tickers, loc=2)
+plt.show()
 
 stock = "GOOG"
 
-amazon = data[[stock]]
-amazon.index
+df = data[[stock]]
+df.index
 
-amazon = amazon.rename(columns={stock: "y"})
-amazon["ds"] = amazon.index
-# amazon.set_index(['ds'], inplace=True)
-amazon.reset_index(inplace=True)
-amazon.head()
+df = df.rename(columns={stock: "y"})
+df["ds"] = df.index
+# df.set_index(['ds'], inplace=True)
+df.reset_index(inplace=True)
+print(df.head())
 
-df_max = amazon.max()
+df_max = df.max()
+print("df_max)
 
+# m = fb.Prophet(daily_seasonality=True)
 m = fb.Prophet()
-m.fit(amazon)
+m.fit(df)
 
 future = m.make_future_dataframe(periods=365)
 future.tail()
@@ -70,8 +72,7 @@ future.tail()
 forecast = m.predict(future)
 forecast[["ds", "yhat", "yhat_lower", "yhat_upper"]].tail()
 
-
-
+# Forecast
 fig1 = m.plot(forecast)
 fig2 = m.plot_components(forecast)
 plt.show()
